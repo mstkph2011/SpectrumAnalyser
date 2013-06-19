@@ -16,7 +16,7 @@ using namespace std;
 int main(int argc, char* argv[] )
 {
 	Int_t DataInput =3; //choose way of creating data spectrum: 1 = generate with rand ; 2 = read file
-	TRint *gROOT = new TRint("ROOT",0,0); //&argc,argv);
+	TRint *App = new TRint("ROOT",0,0); //&argc,argv);
 	TCanvas *c1 = new TCanvas("c1","Canvas",600,400);
 	c1-> cd();
 	TH1D *hSpec;
@@ -84,7 +84,7 @@ int main(int argc, char* argv[] )
 	}
 	if(DataInput==3)
 	{
-		InputFile= "/home/steinen/Desktop/CO60_spec.root";
+		InputFile= "Co60_spec.root";
 		
 		if (argc > 1)
 		{
@@ -130,12 +130,14 @@ int main(int argc, char* argv[] )
 	Ana->SetOutputPath(Path);
 	Ana->SetTxtFileOutputName(TxtFilename);
 	Ana->SetRootFileOutputName(RootFilename);
-	
+	Ana->SetGaussianFitting();
+	Ana->SetFreeSkewedFitting();
+	Ana->SetSecondGausianFitting();
 	Ana->AnalyseSpectrum();
 	//hSpec->Draw("");
 	hSpec->Print();
 	
 	
-	gROOT->Run();
+	App->Run();
 	return 0;
 }

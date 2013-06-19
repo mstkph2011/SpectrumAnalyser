@@ -12,7 +12,8 @@ LDLIBS     = $(shell root-config --glibs) \
 
 SOURCES = $(wildcard *.cxx)
 HEADERS = $(wildcard *.h)
-OBJECTS = $(patsubst %.cxx,%.o,$(wildcard *.cxx))
+OBJECTS = THypGePeakFitFunction.o THypGeSpectrumAnalyser.o SpecTest
+# OBJECTS = $(patsubst %.cxx,%.o,$(wildcard *.cxx))
 
 CC = g++
 CFLAGS = -O2 -DNDEBUG -Wall
@@ -31,5 +32,5 @@ THypGePeakFitFunction.o: THypGePeakFitFunction.cxx THypGePeakFitFunction.h
 .PHONY :                clean
 
 clean :
-			rm $(OBJECTS) *.o *.d.* SpecTest
+			rm $(OBJECTS)
 

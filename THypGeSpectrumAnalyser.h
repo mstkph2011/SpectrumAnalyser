@@ -72,7 +72,14 @@ class THypGeSpectrumAnalyser
 		
 		void											SetSearchRange(Double_t RangeMin,Double_t RangeMax);
 		
+		void											SetGaussianFitting();
+		Bool_t										IsGaussianFitting();
 		
+		void											SetFreeSkewedFitting();
+		Bool_t										IsFreeSkewedFitting();
+		
+		void											SetSecondGausianFitting();
+		Bool_t										IsSecondGausianFitting();
 
 	private:
 
@@ -81,10 +88,13 @@ class THypGeSpectrumAnalyser
 		Double_t 									Calibrate(Double_t Channel);
 		
 		/* add your private declarations */
-		TH1D*											fhEnergySpectrum;
+		TH1D											*fhEnergySpectrum;
 		
 		TCanvas										*fCalSpecCanvas;
-		TH1D*											fhCalibratedSpectrum;
+		TH1D											*fhCalibratedSpectrum;
+		
+		TCanvas										*fSubstractCanvas;
+		TH1D											*fhSubstractSpectrum;
 		TSpectrum*								fSpectrum;
 		Float_t										*PeaksPosX;
 		Float_t										*PeaksPosY;
@@ -95,7 +105,11 @@ class THypGeSpectrumAnalyser
 		TF1 											*FitFunc[50];
 		TF1 											*FitFuncWithoutBg[50];
 		TF1												*CalibratedFunction[50];
-
+		TF1 											*FuncGaus[50];
+		TF1 											*FuncSmoothedStep[50];
+		TF1 											*FuncLinear[50];
+		TF1 											*FuncTail[50];
+		
 		Int_t 										FuncWidth;
 		vector<double> 					PeakFitX;
 		vector<double> 					PeakFitXError;
@@ -136,6 +150,8 @@ class THypGeSpectrumAnalyser
 		TString										RootFilename;
 		
 		Bool_t										BreakProgram;
+		
+		Int_t											fFittingMethod;
 		
 		//ClassDef(THypGeSpectrumAnalyser,1)					// This line must be used for Go4 and PANDAroot !!!!!!!!!!!   gives "IsA()" Error if compiled with g++
 };

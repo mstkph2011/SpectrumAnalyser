@@ -32,6 +32,17 @@ class THypGePeakFitFunction
 	public:
 		THypGePeakFitFunction();
 		Double_t 			PeakFunc (Double_t *x,Double_t *par);
+		Double_t 			PeakFuncGaussian (Double_t *x,Double_t *par);
+		Double_t			PeakFuncFreeSkewedPosition (Double_t *x,Double_t *par);
+		Double_t			PeakFuncDoubleGausian (Double_t *x,Double_t *par);
+		
+		Double_t			GausOnly (Double_t *x,Double_t *par);
+		Double_t			SmoothedStepOnly (Double_t *x,Double_t *par);
+		Double_t			LinearOnly (Double_t *x,Double_t *par);
+		Double_t			SkewedOnly(Double_t *x,Double_t *par);
+		Double_t			FreeSkewedOnly(Double_t *x,Double_t *par);
+		Double_t			SecondGausOnly (Double_t *x,Double_t *par);
+		
 	private:
 		/* add your private declarations */
 };
