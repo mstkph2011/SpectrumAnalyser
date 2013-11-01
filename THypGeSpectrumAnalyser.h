@@ -81,6 +81,8 @@ class THypGeSpectrumAnalyser
 		void											SetSecondGausianFitting();
 		Bool_t										IsSecondGausianFitting();
 
+		void											SetLinearCalibration(Bool_t linCal = 1);
+
 	private:
 
 		Double_t 									FindUpperSigmaFitLimit(Double_t threshold, Float_t StartingPoint);
@@ -118,6 +120,7 @@ class THypGeSpectrumAnalyser
 		TGraphErrors							*fgCalibration;
 		TCanvas										*fCalCanvas;
 		TF1 											*CalFunc;
+		Bool_t										useLinCal;
 		
 		Double_t 									Amplitude[50];
 		Double_t									FWHMHeight[50];

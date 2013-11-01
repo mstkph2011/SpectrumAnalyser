@@ -43,6 +43,7 @@ THypGeSpectrumAnalyser::THypGeSpectrumAnalyser(TH1D* hEnergyspec_ext, Int_t nPea
 	if (CompareNuclei( "eu152")==-1)
 		BreakProgram =-1;
 	fFittingMethod=1;
+	useLinCal=0;
 		
 }
 
@@ -368,7 +369,10 @@ Int_t THypGeSpectrumAnalyser::DoEnergyCalibration()
 	fCalCanvas->cd();
 
 	fgCalibration = new TGraphErrors(nPeaksFound,&(PeakFitX[0]),&(Energies[0]),&(PeakFitXError[0]),&(EnergyErrors[0]));
-	CalFunc = new TF1("CalFunc","pol2",0,8000);
+	if (useLinCal)
+		CalFunc = new TF1("CalFunc","pol1",0,8000);
+	else
+		CalFunc = new TF1("CalFunc","pol2",0,8000);
 	fgCalibration->Draw("AP");
 	fgCalibration->Fit(CalFunc);
 	
@@ -437,17 +441,28 @@ Int_t THypGeSpectrumAnalyser::CompareNuclei(TString NucleiName)
 	
 		if(!NucleiName.CompareTo("co60bg") )
 	{
-		//npeaks = 2;
+		//npeaks = 3;
 		std::cout << "Found Co60 and K40"<< endl;			
 		Energies.push_back(1172.23);				//keV
 		EnergyErrors.push_back(0.030);			//keV
 		Energies.push_back(1332.51);				//keV
 		EnergyErrors.push_back(0.015);			//keV
-		Energies.push_back(1460.83);				//keV
+		Energies.push_back(1460.83);				//keV			K-40
 		EnergyErrors.push_back(0.1);				// placeholder, real value unknown
 		return Energies.size();					// 3 peaks
 	}
-	
+	if(!NucleiName.CompareTo("co60bg") )
+	{
+		//npeaks = 3;
+		std::cout << "Found Co60 and Cs137"<< endl;			
+		Energies.push_back(1172.23);				//keV
+		EnergyErrors.push_back(0.030);			//keV
+		Energies.push_back(1332.51);				//keV
+		EnergyErrors.push_back(0.015);			//keV
+		Energies.push_back(661.7);					//keV			Cs-137
+		EnergyErrors.push_back(0.1);				// placeholder, real value unknown
+		return Energies.size();					// 3 peaks
+	}
 	if( !NucleiName.CompareTo( "eu152") )
 	{
 		std::cout << "Found Eu152"<< endl;
@@ -586,7 +601,7 @@ Int_t THypGeSpectrumAnalyser::DrawCalibratedSpectrum()
 		
 		CalibratedFunction[i] = new TF1(*FitFunc[i]);
 		//adapt parameters to energy spectrum
-		Double_t OldSigma = CalibratedFunction[i]->GetParameter(2);
+		//Double_t OldSigma = CalibratedFunction[i]->GetParameter(2);
 		CalibratedFunction[i]->SetParameter(2,Calibrate(CalibratedFunction[i]->GetParameter(1))-Calibrate(CalibratedFunction[i]->GetParameter(1)-CalibratedFunction[i]->GetParameter(2)));
 		CalibratedFunction[i]->SetParameter(4,Calibrate(CalibratedFunction[i]->GetParameter(1))-Calibrate(CalibratedFunction[i]->GetParameter(1)-CalibratedFunction[i]->GetParameter(4)));
 		CalibratedFunction[i]->SetParameter(1,Calibrate(CalibratedFunction[i]->GetParameter(1)));
@@ -627,8 +642,13 @@ Double_t THypGeSpectrumAnalyser::Calibrate(Double_t Channel)
 {
 	Double_t a = CalFunc->GetParameter(0);
 	Double_t b = CalFunc->GetParameter(1);
-	Double_t c = CalFunc->GetParameter(2);
-	return a + b *Channel + c * Channel * Channel;
+	Double_t CalibratedValue = a + b *Channel;
+	if (!useLinCal)
+	{
+		Double_t c = CalFunc->GetParameter(2);
+		CalibratedValue += c * Channel * Channel;
+	}
+		return CalibratedValue;
 }
 
 
@@ -688,6 +708,7 @@ Int_t THypGeSpectrumAnalyser::ExportToRootFile(TString RootFilename_ext )
 		it++;
 		it2++;
 	}
+	fhEnergySpectrum->Write();
 	DataNTuple->Write();
 	fCalCanvas->Write();
 	fCalSpecCanvas->Write();
@@ -753,4 +774,10 @@ Bool_t THypGeSpectrumAnalyser::IsSecondGausianFitting()
 		return 1;
 	else
 		return 0;
+}
+
+
+void THypGeSpectrumAnalyser::SetLinearCalibration(Bool_t linCal )
+{
+	useLinCal = linCal;
 }

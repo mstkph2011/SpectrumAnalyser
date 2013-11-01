@@ -101,16 +101,16 @@ int main(int argc, char* argv[] )
 	
 	TString Path, InfileName,RootFilename, TxtFilename;
 	Int_t LengthOfPath;
-	if (DataInput > 1)
+	if (DataInput > 1)  
 	{
 		// get path and filename from input
 		LengthOfPath =InputFile.Last('/') +1;
 		Path = InputFile;
-		cout << Path.Remove(LengthOfPath,Path.Length()-LengthOfPath) << endl;
+		cout << Path.Remove(LengthOfPath,Path.Length()-LengthOfPath) << endl;		//isolate path
 		InfileName = InputFile;
-		cout <<InfileName.Remove(0,LengthOfPath) << endl;
+		cout <<InfileName.Remove(0,LengthOfPath) << endl;												//isolate filename
 		//cout << InputFile.Remove(0,InputFile.Last('/')+1) << " "<< InputFile << endl;
-		InfileName.Remove(InfileName.Length()-5, 5);
+		InfileName.Remove(InfileName.Length()-5, 5);														//remove ending ".root"s
 		
 		RootFilename = "Ana_";
 		RootFilename += InfileName;
@@ -125,19 +125,22 @@ int main(int argc, char* argv[] )
 	
 	
 	//hSpec->GetXaxis()->SetRange(2000,8192);
-	THypGeSpectrumAnalyser *Ana = new THypGeSpectrumAnalyser(hSpec,"co60bg", 10 );
+	//THypGeSpectrumAnalyser *Ana = new THypGeSpectrumAnalyser(hSpec,"co60bg", 10 );
+	THypGeSpectrumAnalyser *Ana = new THypGeSpectrumAnalyser(hSpec,"co60", 10 );
 	Ana->SetSearchRange(2000,8192);
 	Ana->SetOutputPath(Path);
+	Ana->SetLinearCalibration(1);
 	Ana->SetTxtFileOutputName(TxtFilename);
 	Ana->SetRootFileOutputName(RootFilename);
 	Ana->SetGaussianFitting();
-	Ana->SetFreeSkewedFitting();
-	Ana->SetSecondGausianFitting();
+	//Ana->SetFreeSkewedFitting();
+	//Ana->SetSecondGausianFitting();
 	Ana->AnalyseSpectrum();
 	//hSpec->Draw("");
 	hSpec->Print();
 	
 	
 	App->Run();
+	delete Ana;
 	return 0;
 }
